@@ -37,7 +37,8 @@ namespace DevEncurtaUrlApi.Controllers
         {
             var link = new ShortenedCustomLink(model.Title, model.DestinationLink);
 
-            _context.Add(link);
+            _context.Links.Add(link);
+            _context.SaveChanges();
 
             return CreatedAtAction("GetById", new { id = link.Id, link });
         }
@@ -49,6 +50,12 @@ namespace DevEncurtaUrlApi.Controllers
 
             if (link is null)
                 return NotFound();
+
+            link.Update(model.Title, model.DestinationLink);
+
+            _context.Links.Update(link);
+
+            _context.SaveChanges();
 
             return NoContent();
         }
@@ -62,6 +69,8 @@ namespace DevEncurtaUrlApi.Controllers
                 return NotFound();
 
             _context.Links.Remove(link);
+
+            _context.SaveChanges();
 
             return NoContent();
         }
