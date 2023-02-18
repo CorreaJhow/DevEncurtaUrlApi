@@ -2,6 +2,7 @@
 using DevEncurtaUrlApi.Models;
 using DevEncurtaUrlApi.Persistence;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace DevEncurtaUrlApi.Controllers
 {
@@ -15,13 +16,21 @@ namespace DevEncurtaUrlApi.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Get all used shortened links 
+        /// </summary>
+        /// <returns>All Objects</returns>
+        /// /// <response code="200">Sucess</response>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult Get()
         {
+            Log.Information("Listagem foi chamada");
             return Ok(_context.Links);
         }
 
-        [HttpGet("{id^}")]
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult GetById(int id)
         {
             var link = _context.Links.SingleOrDefault(x => x.Id == id);
@@ -32,7 +41,17 @@ namespace DevEncurtaUrlApi.Controllers
             return Ok(link);
         }
 
+        /// <summary>
+        /// Register a shortened link 
+        /// </summary>
+        /// <remarks>
+        /// { "title": "TitleReferencesForShortener", "destinationLink" : "LinkToBeShorten"}
+        /// </remarks>
+        /// <param name="model">link Data</param>
+        /// <returns>Newly created object</returns>
+        /// <response code="201">Sucess</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public IActionResult Post(AddOrUpdateShortenedLinkModel model)
         {
             var link = new ShortenedCustomLink(model.Title, model.DestinationLink);
